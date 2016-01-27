@@ -1,1 +1,2 @@
-# Prednasky
+# Prednášky
+Prednášky k funkcionálku
