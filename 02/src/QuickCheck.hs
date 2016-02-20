@@ -4,6 +4,7 @@ import Test.QuickCheck
 import Text.Show.Functions
 import Data.List(sort)
 
+
 ch1   = 
       quickCheck(\(xs,n) -> length (take n xs) == n)
 
@@ -30,9 +31,8 @@ ch6   =
 
 ch7   =       
       quickCheck ( (\xs -> \p1 -> \p2 -> 
-            (filter p1 xs) ++ (filter p2 xs) = filter (\x -> p1 x || p2 x) xs
+            (filter p1 xs) ++ (filter p2 xs) == filter (\x -> p1 x || p2 x) xs)
                   :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
-
 
 
 test1 = quickCheck((\xs -> \ys -> (length (xs ++ ys) == length xs + length ys)))
