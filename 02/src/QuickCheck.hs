@@ -4,6 +4,37 @@ import Test.QuickCheck
 import Text.Show.Functions
 import Data.List(sort)
 
+ch1   = 
+      quickCheck(\(xs,n) -> length (take n xs) == n)
+
+ch2   = 
+      verboseCheck (\(xs,n) -> length (take n xs) == n)
+
+ch3   = 
+      verboseCheck (\(xs,n) -> n>=0 ==> length (take n xs) == n)
+
+ch4   = 
+      quickCheck (\(xs,n) -> n>=0 && length xs == n ==> length (take n xs) == n)
+
+{-
+ch5   = 
+      quickCheck ( (\xs -> \p1 -> \p2 -> 
+            filter p1 (filter p2 xs) == filter (p1 && p2) xs)
+                  :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
+-}  
+  
+ch6   =       
+      quickCheck ( (\xs -> \p1 -> \p2 -> 
+            filter p1 (filter p2 xs) == filter (\x -> (p1 x) && (p2 x)) xs)
+                  :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
+
+ch7   =       
+      quickCheck ( (\xs -> \p1 -> \p2 -> 
+            (filter p1 xs) ++ (filter p2 xs) = filter (\x -> p1 x || p2 x) xs
+                  :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
+
+
+
 test1 = quickCheck((\xs -> \ys -> (length (xs ++ ys) == length xs + length ys)))
 test2 = quickCheck((\xs -> (length (reverse xs ) == length xs )))
 test3 = quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  )))
