@@ -15,8 +15,25 @@ ch3   =
       verboseCheck (\(xs,n) -> n>=0 ==> length (take n xs) == n)
 
 ch4   = 
-      quickCheck (\(xs,n) -> n>=0 && length xs == n ==> length (take n xs) == n)
+      quickCheck (\(xs,n) -> n>=0 && length xs >= n ==> length (take n xs) == n)
 
+      
+x1 =  
+      quickCheck (\(m,n) -> length [m..n] == n-m+1)
+-- verboseCheck (\(m,n) -> length [m..n] == n-m+1)
+      
+x2 =  
+      quickCheck (\(m,n) -> m <= n ==> length [m..n] == n-m+1)
+
+x3 =
+      quickCheck((\xs -> (length (reverse xs ) == length xs )))
+      
+x4 =
+      quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  )))      
+      
+x5  =
+      quickCheck((\xs -> \ys -> ( length xs == length ys ==>
+              (xs, ys) ==  unzip (zip xs ys)  )))      
 {-
 ch5   = 
       quickCheck ( (\xs -> \p1 -> \p2 -> 
@@ -72,10 +89,21 @@ head_map_f =
             (\xs -> \f -> head (map f xs) == f (head xs))
             ::[Int]->(Int->Int)->Bool)
 
--- head (map f xs) = f (head xs)	                 head . map f = f . head            
+head_map_f' = 
+  quickCheck(
+            (\xs -> \f -> if (length xs > 0) then head (map f xs) == f (head xs) else True)
+            ::[Int]->(Int->Int)->Bool)
+
+            
+-- tail (map f xs) = map f (tail xs)	                 tail . map f = map f . tail            
 tail_map_f = 
   quickCheck(
-            (\xs -> \f -> tail (map f xs) == f (tail xs))
+            (\xs -> \f -> tail (map f xs) == map f (tail xs))
+            ::[Int]->(Int->Int)->Bool)
+
+tail_map_f' = 
+  quickCheck(
+            (\xs -> \f -> if (length xs > 0) then (tail (map f xs) == map f (tail xs)) else True)
             ::[Int]->(Int->Int)->Bool)
 
 -- map f (xs++ys) = map f xs++map f ys
