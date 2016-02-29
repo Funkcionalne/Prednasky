@@ -20,8 +20,9 @@ goo   (x:xs)
   | even x    = (x-2) * goo xs
   | otherwise = goo xs
   
-goo' xs = [ x-2 | x <- xs, even x]           
+goo' xs = product [ x-2 | x <- xs, even x]           
 goo''  = product . map (subtract 2) . filter (even)
+goo'''  = foldl (*) 1 . map (subtract 2) . filter (even)
 
 ---------------------
 hoo :: Integer -> [Integer]
