@@ -25,3 +25,11 @@ take'' :: Int -> [a] -> [a]
 take'' n xs  =  (foldr pom (\_ -> []) xs) n where  
                   pom x h n = if n == 0 then []
                               else x:(h (n-1))
+                              
+take''' n xs = foldr (\a h -> \n -> case n of
+              0 -> []
+              n -> a:(h (n-1)) )
+			  (\_ -> [])
+		   	xs
+		   	n
+                              
