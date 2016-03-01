@@ -32,4 +32,16 @@ take''' n xs = foldr (\a h -> \n -> case n of
 			  (\_ -> [])
 		   	xs
 		   	n
-                              
+                      
+-- poslednych 5                       
+take_ :: Int -> [a] -> [a]
+take_ n xs  =  snd $ foldr pom (n, []) xs where  
+                pom x (n, vysl) = if n <= 0 then (n, vysl)
+                                  else (n-1, x:vysl)
+
+-- prvych 5, ale reversnute, preto reverse                       
+take__ :: Int -> [a] -> [a]
+take__ n xs  =  reverse $ snd $ foldl pom (n, []) xs where  
+                pom (n, vysl) x = if n <= 0 then (n, vysl)
+                                  else (n-1, x:vysl)
+                                  
