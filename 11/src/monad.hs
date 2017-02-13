@@ -259,19 +259,16 @@ evalSM(Div t u) = evalSM t >>= \valT-> evalSM u >>= \valU -> incState >>= \_ -> 
 
 goSM       :: Term -> State
 goSM t        = let SM p = evalSM t in 
-         let (result,state) = p 0 in state
+                let (result,state) = p 0 in state
 
 evalSM'          :: Term -> SM Int
 evalSM'(Con a)   = return a
 evalSM'(Div t u) = do valT<-evalSM' t;
                                                                                                               valU<-evalSM' u;
-                                                                                                              incState;
-                                                                                                              return(valT `div` valU)
-
+                                            
 goSM'              :: Term -> State
 goSM' t        = let SM p = evalSM' t in 
                   let (result,state) = p 0 in state
-
 
 -- Main> goSM (Div (Div (Con 1972) (Con 2)) (Con 23))
 -- 2
