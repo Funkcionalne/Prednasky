@@ -1,4 +1,4 @@
-module QCH where
+module QuickCheck where
 
 import Test.QuickCheck
 import Text.Show.Functions
@@ -6,34 +6,34 @@ import Data.List(sort)
 
 
 ch1   = 
-      quickCheck(\(xs,n) -> length (take n xs) == n)
+      quickCheck((\(xs,n) -> length (take n xs) == n)::([Int], Int)->Bool)
 
 ch2   = 
-      verboseCheck (\(xs,n) -> length (take n xs) == n)
+      verboseCheck ((\(xs,n) -> length (take n xs) == n)::([Int], Int)->Bool)
 
 ch3   = 
-      verboseCheck (\(xs,n) -> n>=0 ==> length (take n xs) == n)
+      verboseCheck ((\(xs,n) -> n>=0 ==> length (take n xs) == n)::([Int], Int)->Property)
 
 ch4   = 
-      quickCheck (\(xs,n) -> n>=0 && length xs >= n ==> length (take n xs) == n)
+      quickCheck ((\(xs,n) -> n>=0 && length xs >= n ==> length (take n xs) == n)::([Int], Int)->Property)
 
       
 x1 =  
-      quickCheck (\(m,n) -> length [m..n] == n-m+1)
+      quickCheck ((\(m,n) -> length [m..n] == n-m+1)::(Int,Int)->Bool)
 -- verboseCheck (\(m,n) -> length [m..n] == n-m+1)
       
 x2 =  
-      quickCheck (\(m,n) -> m <= n ==> length [m..n] == n-m+1)
+      quickCheck ((\(m,n) -> m <= n ==> length [m..n] == n-m+1)::(Int,Int)->Property)
 
 x3 =
-      quickCheck((\xs -> (length (reverse xs ) == length xs )))
+      quickCheck(((\xs -> (length (reverse xs ) == length xs )))::[Int]->Bool)
       
 x4 =
-      quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  )))      
+      quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  ))::([Int]->[Int]->Bool))      
       
 x5  =
       quickCheck((\xs -> \ys -> ( length xs == length ys ==>
-              (xs, ys) ==  unzip (zip xs ys)  )))      
+              (xs, ys) ==  unzip (zip xs ys)  ))::([Int]->[Int]->Property))      
 {-
 ch5   = 
       quickCheck ( (\xs -> \p1 -> \p2 -> 
@@ -52,9 +52,9 @@ ch7   =
                   :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
 
 
-test1 = quickCheck((\xs -> \ys -> (length (xs ++ ys) == length xs + length ys)))
-test2 = quickCheck((\xs -> (length (reverse xs ) == length xs )))
-test3 = quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  )))
+test1 = quickCheck((\xs -> \ys -> (length (xs ++ ys) == length xs + length ys))::[Int]->[Int]->Bool)
+test2 = quickCheck((\xs -> (length (reverse xs ) == length xs ))::[Int]->Bool)
+test3 = quickCheck((\xs -> \ys -> ( (xs, ys) ==  unzip (zip xs ys)  ))::[Int]->[Int]->Bool)
 test4 = quickCheck((\xs -> \ys -> if length xs == length ys then ( (xs, ys) ==  unzip (zip xs ys)  ) else True) :: ([Int] -> [Int] -> Bool))
 test5 = quickCheck( (\f -> \xs -> \ys -> ((map f xs) ++ (map f ys) == map f (xs ++ ys))) :: (Int->Int) ->[Int] -> [Int] -> Bool)
 test6 = quickCheck( (\xs -> \ys -> ((map id xs) ++ (map id ys) == map id (xs ++ ys))) :: [Int] -> [Int] -> Bool)
