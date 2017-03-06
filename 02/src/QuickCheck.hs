@@ -136,3 +136,42 @@ map_filter_map =
   quickCheck( (\xs -> \f -> \p -> (filter p (map f xs) == map  f (filter  (p.f) xs)))
     :: [Int] -> (Int->Int) -> (Int->Bool) -> Bool)
 
+-- 	= take n . map f
+map_take =       
+  quickCheck( (\n -> \xs -> \f ->  ( map f . take n) xs ==   (take n . map f) xs)
+    :: Int -> [Int] -> (Int->Int) -> Bool)
+
+-- 	= map f . filter p = map fst . filter snd . map (fork (f,p))
+map_filter_fork =       
+  quickCheck( (\xs -> \f -> \p -> ((map f . filter p) xs == (map fst . filter snd . map (fork (f,p))) xs))
+    :: [Int] -> (Int->Int) -> (Int->Bool) -> Bool)
+   where --fork :: (a->b, a->c) -> a -> (b,c)
+		     fork (f,g) x = (f x, g x)
+        
+-- reverse . concat= concat . reverse . map reverse
+map_reverse_concat =       
+  quickCheck( (\xs -> (reverse . concat) xs == (concat . reverse . map reverse) xs)
+    :: [[Int]] -> Bool)
+    
+--  filter p . concat = concat . map (filter p)
+filter_concat = 
+  quickCheck( (\xs -> \p -> (filter p . concat) xs == (concat . map (filter p)) xs )
+    :: [[Int]] -> (Int->Bool) -> Bool)
+    
+-- map f . apply fs  == apply (map (f.) fs)
+map_apply = quickCheck( (\xs -> \f -> \fs -> ((map f . apply fs) xs == (apply (map (f.) fs)) xs))
+    :: [Int] -> (Int->Int) -> [Int->Int] -> Bool)
+    where -- apply 	      :: [a -> b] -> [a] -> [b]
+        apply fs args = [ f a | f <- fs, a <- args]
+
+-- (apply fs) . (map f)  == apply (map (.f) fs)
+apply_f = quickCheck( (\xs -> \f -> \fs -> (((apply fs) . (map f)) xs == (apply (map (.f) fs)) xs))
+    :: [Int] -> (Int->Int) -> [Int->Int] -> Bool)
+    where -- apply 	      :: [a -> b] -> [a] -> [b]
+        apply fs args = [ f a | f <- fs, a <- args]
+        
+-- acid_rain foldr f z . g (:) [] = g f z
+acid_rain = quickCheck( (\z -> \xs -> \f -> \g -> (( (foldr f z) . (g (:) [])) xs == (g f z) xs))
+    :: Int -> [Int] -> (Int->Int->Int) -> ((Int->Int->Int) -> Int ->Int) -> Bool)
+        
+    
