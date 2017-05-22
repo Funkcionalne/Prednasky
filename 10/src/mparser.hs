@@ -230,3 +230,6 @@ term   = factor `chainl1` mulop
 --factor = mplus (token digit') (do {symb "("; n <- expr; symb ")"; return n})
 -- factor = mplus (token nat) (do {symb "("; n <- expr; symb ")"; return n})
 factor = nat `plus` (do {open; n <- expr; close; return n})
+
+
+       

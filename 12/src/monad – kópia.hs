@@ -264,10 +264,7 @@ goSM t        = let SM p = evalSM t in
 evalSM'          :: Term -> SM Int
 evalSM'(Con a)   = return a
 evalSM'(Div t u) = do valT<-evalSM' t;
-                      valU<-evalSM' u;
-                      incState;
-                      return(valT `div` valU) 
-
+                                                                                                              valU<-evalSM' u;
                                             
 goSM'              :: Term -> State
 goSM' t        = let SM p = evalSM' t in 
