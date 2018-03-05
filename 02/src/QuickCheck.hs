@@ -4,6 +4,14 @@ import Test.QuickCheck
 import Text.Show.Functions
 import Data.List(sort)
 
+f :: Integer -> Integer 
+f n   | even(n) = n `div` 2 
+      | odd(n)  = 3*n + 1 
+collatz   :: Integer -> Bool 
+collatz 1 = True 
+collatz n = collatz (f n)
+
+
 
 ch1   = 
       quickCheck((\(xs,n) -> length (take n xs) == n)::([Int], Int)->Bool)
@@ -146,7 +154,7 @@ map_filter_fork =
   quickCheck( (\xs -> \f -> \p -> ((map f . filter p) xs == (map fst . filter snd . map (fork (f,p))) xs))
     :: [Int] -> (Int->Int) -> (Int->Bool) -> Bool)
    where --fork :: (a->b, a->c) -> a -> (b,c)
-		     fork (f,g) x = (f x, g x)
+        fork (f,g) x = (f x, g x)
         
 -- reverse . concat= concat . reverse . map reverse
 map_reverse_concat =       
@@ -171,7 +179,7 @@ apply_f = quickCheck( (\xs -> \f -> \fs -> (((apply fs) . (map f)) xs == (apply 
         apply fs args = [ f a | f <- fs, a <- args]
         
 -- acid_rain foldr f z . g (:) [] = g f z
-acid_rain = quickCheck( (\z -> \xs -> \f -> \g -> (( (foldr f z) . (g (:) [])) xs == (g f z) xs))
-    :: Int -> [Int] -> (Int->Int->Int) -> ((Int->Int->Int) -> Int ->Int) -> Bool)
+--acid_rain = quickCheck( (\z -> \xs -> \f -> \g -> (( (foldr f z) . (g (:) [])) xs == (g f z) xs))
+--    :: Int -> [Int] -> (Int->Int->Int) -> ((Int->Int->Int) -> Int ->Int) -> Bool)
         
     
