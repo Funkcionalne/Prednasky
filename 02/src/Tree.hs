@@ -16,8 +16,22 @@ import Control.Monad.State
 import Data.Maybe (maybeToList)
 
 data BVS t = Nil | Node (BVS t) t (BVS t)  
-      deriving(Show, Ord, Eq)
+      deriving(Show, Eq)
       
+{-	  
+gener  :: Int -> BVS Int
+gener 0     = Nil
+gener depth = Node (gener (depth - 1)) 5 (gener (depth - 1))
+		 where nextInt = generate (arbitrary::Gen Int)
+		 
+gener'  :: Int -> BVS Int
+gener' 0     = Nil
+gener' depth = do  
+				  nextInt <- generate (arbitrary::Gen Int)
+				  return Node (gener' (depth - 1)) 5 (gener' (depth - 1))
+		 
+-}
+
 instance Arbitrary a => Arbitrary (BVS a) where
   arbitrary = frequency 
               [

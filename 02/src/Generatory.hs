@@ -6,6 +6,21 @@ import Data.List(sort)
 import Test.QuickCheck.Arbitrary
 import Control.Monad
 
+ex1 = do {f<-generate arbitrary :: IO (Integer->Integer); return (f 7)}
+
+ex2 = do {
+		f<-generate arbitrary :: IO (Integer->Integer); 
+		g<-generate arbitrary :: IO (Integer->Integer); 
+		x<-generate arbitrary :: IO Integer;
+		return (((f.g) x) == ((g.f) x)) }
+
+ex3 = do {
+		f<-generate arbitrary :: IO (Integer->Integer); 
+		g<-generate arbitrary :: IO (Integer->Integer); 
+		h<-generate arbitrary :: IO (Integer->Integer); 
+		x<-generate arbitrary :: IO Integer;
+		return ((((f.g).h) x) == (((f.g).h) x)) }
+
 
 kocka :: Gen Int
 kocka = choose(1,6)

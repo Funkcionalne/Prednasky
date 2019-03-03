@@ -1,5 +1,4 @@
 module Arrays where
-    
 import Test.QuickCheck
 
 set :: [t] -> Int -> t -> [t]
