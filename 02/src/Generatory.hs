@@ -6,6 +6,10 @@ import Data.List(sort)
 import Test.QuickCheck.Arbitrary
 import Control.Monad
 
+ex0 = do { fst <- generate arbitrary::IO Int; 
+           snd <- generate arbitrary::IO Char; 
+           return (fst, snd) }
+		   
 ex1 = do {f<-generate arbitrary :: IO (Integer->Integer); return (f 7)}
 
 ex2 = do {

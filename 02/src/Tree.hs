@@ -70,7 +70,7 @@ flat (Node left value right)  = flat left ++ [value] ++ flat right
 
 e  = Node Nil 4 (Node Nil 7 Nil)
 
-qch1 = verbose((\x -> \tree -> find x tree)::Int->(BVS Int)->Bool)
+qch1 = quickCheck((\x -> \tree -> find x tree)::Int->(BVS Int)->Bool)
 qch2 = quickCheck((\x -> \tree -> ((find x tree) == (elem x (flat tree))))::Int->BVS Int->Bool)
 {--
 "?: " qch2
