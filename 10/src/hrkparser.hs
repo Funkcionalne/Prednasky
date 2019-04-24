@@ -1,4 +1,4 @@
-module Main where
+module HrkParser where
 
 import Text.ParserCombinators.Parsec 
 import Text.ParserCombinators.Parsec.Expr
@@ -9,8 +9,8 @@ import Text.ParserCombinators.Parsec.Language
 
 run  :: Show a => Parser a -> String -> IO()
 run p input = case (parse p "" input) of
-	  Left err -> do { putStr "parse error at" ; print err }	
-	  Right x -> print x
+      Left err -> do { putStr "parse error at" ; print err }    
+      Right x -> print x
 
 -- run (char '!') "!123!"
 -- run (oneOf "!?.") "?123"
@@ -20,25 +20,25 @@ run p input = case (parse p "" input) of
 -- run word "abc def"
 -- run word "abc123"
 
-paren :: Parser ()	-- parser, ktory nevracia ziadnu hodnotu
+paren :: Parser ()    -- parser, ktory nevracia ziadnu hodnotu
 paren = do{ char '('
-	; paren
-	; char ')'
-	; paren
-	}
+    ; paren
+    ; char ')'
+    ; paren
+    }
          <|> return ()
 
          
 -- run paren "(())"
 -- run paren "(()"
 
-data Bin	= Nil | Node Bin Bin	-- vnútorná reprezentácia
-	deriving(Show, Read, Eq) 
-		
-parenBin	   :: Parser Bin		 -- analyzátor zo String do Bin
-parenBin	   = do { char '('; x<-parenBin; char ')'; y<-parenBin; return (Node x y) } 
-	       <|>
-	     return Nil
+data Bin    = Nil | Node Bin Bin    -- vnútorná reprezentácia
+    deriving(Show, Read, Eq) 
+        
+parenBin       :: Parser Bin         -- analyzátor zo String do Bin
+parenBin       = do { char '('; x<-parenBin; char ')'; y<-parenBin; return (Node x y) } 
+           <|>
+         return Nil
 {-
 run parenBin "(())()"
 Node (Node Nil Nil) (Node Nil Nil)
@@ -46,15 +46,15 @@ Node (Node Nil Nil) (Node Nil Nil)
 run parenBin "(())"
 Node (Node Nil Nil) Nil
 -}
-	     
+         
 
-nesting :: Parser Int	-- parser, ktory vracia hlbku vyrazu
+nesting :: Parser Int    -- parser, ktory vracia hlbku vyrazu
 nesting = do{ char '('
-	; n <- nesting
-	; char ')'
-	; m <- nesting
-	; return (max (n+1) m)
-	}
+    ; n <- nesting
+    ; char ')'
+    ; m <- nesting
+    ; return (max (n+1) m)
+    }
            <|> return 0
 
 -- run nesting "(())()"
@@ -62,9 +62,9 @@ nesting = do{ char '('
 
 word :: Parser String
 word = do{ c <- letter ; 
-	do{ cs <- word ; return (c:cs) }
-	<|> 
-	return [c]
+    do{ cs <- word ; return (c:cs) }
+    <|> 
+    return [c]
           }
 
 separator :: Parser ()
@@ -74,33 +74,33 @@ separator = skipMany1 (space <|> char ',' <|> char ';')
 
 sentence :: Parser [String]
 sentence = do{ words <- sepBy1 word separator
-		; oneOf ".?!"
-		; return words
-	}
+        ; oneOf ".?!"
+        ; return words
+    }
 
 number :: Parser Integer
 number = do{ ds <- many1 digit ; return (read ds) }
           <?> "number"
-	
+    
 --------------------------------
 
 lexer :: TokenParser ()
 lexer = makeTokenParser(
-	emptyDef
-	{ commentStart = "{-"
-               	, commentEnd = "-}"
-              	, identStart = letter
-              	, identLetter = alphaNum
-              	, opStart = oneOf "!&|"
-              	, opLetter = oneOf "!&|"
-              	, reservedOpNames = ["!", "&&", "||"]
-              	, reservedNames = ["true", "false", "nop",
+    emptyDef
+    { commentStart = "{-"
+                   , commentEnd = "-}"
+                  , identStart = letter
+                  , identLetter = alphaNum
+                  , opStart = oneOf "!&|"
+                  , opLetter = oneOf "!&|"
+                  , reservedOpNames = ["!", "&&", "||"]
+                  , reservedNames = ["true", "false", "nop",
                                  "if", "then", "else", "end",
                                  "while", "do"]
-               	}	
+                   }    
           )
-	
-	
+    
+    
 _parens = parens lexer
 _semi = semi lexer
 _identifier= identifier lexer
@@ -111,31 +111,31 @@ _lexeme = lexeme lexer
 _symbol = symbol lexer
 _natural = natural lexer
 _semiSep1 = semiSep1 lexer
-	
+    
 -----------------------------------
 {-
 stmt ::=
-	while <expr> do <stmt> end while
-	if <expr> then <stmt> [else <stmt>] end if
-	<id>++
-	<id>--
-	
-expr ::= 	 <id> hrka
-	 <id> nehrka
-	 true
-	 false
-	 <expr> && <expr>
-	 <expr> || <expr>
-	 !<expr> 
-	 (<expr>)
+    while <expr> do <stmt> end while
+    if <expr> then <stmt> [else <stmt>] end if
+    <id>++
+    <id>--
+    
+expr ::=      <id> hrka
+     <id> nehrka
+     true
+     false
+     <expr> && <expr>
+     <expr> || <expr>
+     !<expr> 
+     (<expr>)
 -}
 
-data HrkaNehrka = Hrka | Nehrka	deriving Show
-data Expr = 	Var String HrkaNehrka | 
-	Con Bool | 
-	UnOp UnOp Expr | 
-	BinOp BinOp Expr Expr
-     	deriving Show
+data HrkaNehrka = Hrka | Nehrka    deriving Show
+data Expr =     Var String HrkaNehrka | 
+    Con Bool | 
+    UnOp UnOp Expr | 
+    BinOp BinOp Expr Expr
+         deriving Show
 
 data UnOp = Not deriving Show
 data BinOp = And | Or deriving Show
@@ -149,8 +149,8 @@ table = [ [Prefix ( do { _reservedOp "!"; return (UnOp Not)})]
         
 factor = _parens hrkExpr
        <|> (do { id <-_identifier ; 
-       	kind <- do { _reserved "hrka"; return Hrka } <|> do { _reserved "nehrka"; return Nehrka };
-       	return (Var id kind)})
+           kind <- do { _reserved "hrka"; return Hrka } <|> do { _reserved "nehrka"; return Nehrka };
+           return (Var id kind)})
        <|> (do { _reserved "true" ; return (Con True)})
        <|> (do { _reserved "false" ; return (Con False)})
 

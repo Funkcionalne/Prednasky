@@ -10,7 +10,7 @@ module Parser
     )
 where
 
-import Prelude hiding ((<*>), (*>), (<*))
+import Prelude hiding ((<*>), (*>), (<*), sequence)
 import Data.Char
 
 type Parser symbol result  =  [symbol] -> [([symbol],result)]
