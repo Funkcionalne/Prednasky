@@ -2,22 +2,23 @@ module Rodicia where
 
 import Data.Maybe
 import Control.Monad
-
-matka :: String -> Maybe String
-matka "Anna" = Just "Eva"
-matka "Betka" = Just "Hanka"
-matka "Danka" = Just "Iveta"
-matka "Eva" = Just "Renata"
-matka "Hanka" = Just "Michaela"
-matka "Iveta" = Just "Svetlana"
-matka "Adam" = Just "Danka"
-matka "Boris" = Just "Eva"
-matka "Dusan" = Just "Hanka"
-matka "Emil" = Just "Iveta"
-matka "Gusto" = Just "Maria"
-matka "Ivan" = Just "Renata"
-matka _ = Nothing
-
+----------
+mama :: String -> Maybe String
+mama "Anna" = Just "Eva"
+mama "Betka" = Just "Hanka"
+mama "Danka" = Just "Iveta"
+mama "Eva" = Just "Renata"
+mama "Hanka" = Just "Michaela"
+mama "Iveta" = Just "Svetlana"
+mama "Adam" = Just "Danka"
+mama "Boris" = Just "Eva"
+mama "Dusan" = Just "Hanka"
+mama "Emil" = Just "Iveta"
+mama "Gusto" = Just "Maria"
+mama "Ivan" = Just "Renata"
+mama "Maria" = Just "Elena"
+mama _ = Nothing
+-----------
 otec :: String -> Maybe String
 otec "Anna" = Just "Dusan"
 otec "Betka" = Just "Emil"
@@ -33,37 +34,55 @@ otec "Gusto" = Just "Rado"
 otec "Ivan" = Just "Zigmund"
 otec _ = Nothing
 
--- Vrati to iste co matka, iba zacne prefixom "Lady "
-lady_matka :: String -> Maybe String
--- lady_matka _ = Nothing
--- jednoducho:
-lady_matka x = if matka x == Nothing then Nothing else Just ("Lady " ++ (fromJust (matka x)))
--- pekne:
-lady_matka' :: String -> Maybe String
-lady_matka' x =   do  m <- matka x
-                      return ("Lady " ++ m)
+-- Vrati to iste, co mama, iba zacne prefixom "Mila "
+mila_mama' :: String -> Maybe String
+-- mila_mama _ = Nothing
+-- klasicky:
+mila_mama' x = if mama x == Nothing then Nothing else Just ("Mila " ++ (fromJust (mama x)))
+-- monadicky:
+mila_mama :: String -> Maybe String
+mila_mama x =   do  m <- mama x
+                    return ("Mila " ++ m)
 
--- Vrati to iste co otec, iba zacne prefixom "Sir "
-sir_otec :: String -> Maybe String
-sir_otec x =   do  o <- otec x
-                   return ("Sir " ++ o)
-
--- Vrati otca otcovho otca
+-- Vrati otcovho otca
 praotec :: String -> Maybe String
 praotec x = do o <- otec x
                po <- otec o
                return po
--- Pre k=1 matka, pre k=2 babka, pre k=3 prababka ...
-k_matka :: Int -> String -> Maybe String
-k_matka 1 x = matka x
-k_matka k x = do m <- matka x
-                 mk <- k_matka (k-1) m
-                 return mk
+
+{-
+otec "Anna" = Just "Dusan"
+praotec "Anna" = Just "Ivan"
+
+otec "Iveta" =  Just "Peter"
+praotec "Iveta" = Nothing
+-}
+
+-- Pre k=1 mama, pre k=2 babka, pre k=3 prababka ...
+k_mama :: Int -> String -> Maybe String
+k_mama 1 x = mama x
+k_mama k x = do m <- mama x
+                mk <- k_mama (k-1) m
+                return mk
 
 -- Vrati rodicov
-rodicia :: String -> [String]
-rodicia _ = []
+rodicia' :: String -> [String]
+rodicia' x = (if otec x == Nothing then [] else [fromJust (otec x)])
+             ++
+             (if mama x == Nothing then [] else [fromJust (mama x)])
 
+rodicia :: String -> Maybe [String]
+-- rodicia x = sequence [otec x, mama x]
+
+-- rodicia x = do { o<-otec x; return [o] } `mplus` (do m<-mama x; return [m])
+-- rodicia "Iveta" = Just ["Peter"]
+
+-- rodicia x = do { o<-otec x; m<-mama x; return ([o] `mplus` [m]) }
+-- rodicia "Iveta" = Just ["Peter","Svetlana"]
+
+-- rodicia "Maria" = Just ["Elena"]
+
+ 
 -- Vrati prarodicov
 prarodicia :: String -> [String]
 prarodicia _ = []
