@@ -25,6 +25,10 @@ ch3   =
 ch4   = 
       quickCheck ((\(xs,n) -> n>=0 && length xs >= n ==> length (take n xs) == n)::([Int], Int)->Property)
 
+chcollatz1 = quickCheck (\n -> n > 0 ==> collatz(n))
+chcollatz2 = quickCheckWith stdArgs{ maxSuccess = 100000 }          
+                         (\n -> n > 0 ==> collatz(n)) 
+
       
 x1 =  
       quickCheck ((\(m,n) -> length [m..n] == n-m+1)::(Int,Int)->Bool)
