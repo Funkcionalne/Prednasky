@@ -1,4 +1,3 @@
--- kodovanie UTF-8 bez BOM (Notepad++)
 module Terms where
  
 -- identifikator premennej je String 
