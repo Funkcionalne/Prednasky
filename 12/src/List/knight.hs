@@ -33,5 +33,5 @@ ink k start = do m <- moveKnight start
                  mm <- ink (k-1) m
                  return mm
 
--- length $ ink 7 (0,0) = 45016
--- length $ nub $ ink 7 (0,0) = 32
+-- length $ ink 7 (1,1) = 45016
+-- length $ nub $ ink 7 (1,1) = 32

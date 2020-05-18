@@ -1,12 +1,12 @@
 import Data.Char
 import Control.Monad.State
 
-data Tree a = 	Nil | 
+data Tree a =   Nil | 
                 Node a (Tree a) (Tree a) 
                 deriving (Show, Eq)
 
 preorder :: Tree a -> State [a] ()
-preorder Nil 	= return ()
+preorder Nil = return ()
 preorder (Node value left right) = 
                     do 
                         str <-get  -- hodnota stavu
@@ -26,7 +26,7 @@ e' = Node "d" e e
 --------------------------------------
 
 reindex :: Tree a -> State Int (Tree Int)
-reindex Nil 	= return Nil
+reindex Nil     = return Nil
 reindex (Node value left right) = do 
                                       i <- get    -- hodnota stavu
                                       put (i+1)   -- prepis hodnotu stavu
