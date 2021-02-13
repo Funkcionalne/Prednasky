@@ -30,8 +30,11 @@ goo''' a b = sum $
                    takeWhile ((>0).fst) $ 
                      iterate (\(a,b) -> (shiftR a 1, shiftL b 1)) (a,b)            
                      
-hypotheza1   = quickCheck(\a -> \b -> goo a b == goo' a b)
-hypotheza2   = quickCheck(\a -> \b -> a>=0 ==> goo a b == goo' a b)
-hypotheza3   = quickCheck(\a -> \b -> a>=0 ==> length ( nub [goo a b, goo' a b, goo'' a b, goo''' a b]) == 1)
+hypotheza1   = quickCheck(\a -> \b -> 
+                    goo a b == goo' a b)
+hypotheza2   = quickCheck(\a -> \b -> 
+                    a >= 0 ==> goo a b == goo' a b)
+hypotheza3   = quickCheck(\a -> \b -> 
+                    a >= 0 ==> length ( nub [goo a b, goo' a b, goo'' a b, goo''' a b]) == 1)
 
                      

@@ -15,3 +15,4 @@ int main(void) {
     printf("%f\n",first(&second));
     return 0;
 }
+
