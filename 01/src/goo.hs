@@ -15,6 +15,13 @@ goo' a b = foldl (\acc -> \(a,b) -> acc + if a `mod` 2 > 0 then b else 0) 0 $
              takeWhile ((>0).fst) $ 
                iterate (\(a,b) -> (a `div` 2, 2*b)) (a,b)
 
+{-
+take 10 $ iterate (\(a,b) -> (a `div` 2, 2*b)) (17,21)
+takeWhile ((>0).fst) $ iterate (\(a,b) -> (a `div` 2, 2*b)) (17,21)
+filter ((>0).(`mod`2).fst) $ takeWhile ((>0).fst) $ iterate (\(a,b) -> (a `div` 2, 2*b)) (17,21)
+map (snd) $filter ((>0).(`mod`2).fst) $ takeWhile ((>0).fst) $ iterate (\(a,b) -> (a `div` 2, 2*b)) (17,21)
+sum $ map (snd) $filter ((>0).(`mod`2).fst) $ takeWhile ((>0).fst) $ iterate (\(a,b) -> (a `div` 2, 2*b)) (17,21)
+-}
 -- bojazlivejší čo pozná map filter z Pythonu
 goo'' :: Int -> Int -> Int
 goo'' a b = sum $
