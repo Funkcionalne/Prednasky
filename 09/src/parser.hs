@@ -1,4 +1,4 @@
-module Parser 
+module Parser
     ((<*>), (<*), (*>), (<:*>), (<@), (<?@), (<|>),
     failp, succeed, epsilon,
     satisfy, symbol, token,
@@ -12,6 +12,8 @@ where
 
 import Prelude hiding ((<*>), (*>), (<*), sequence)
 import Data.Char
+
+import Terms -- pre domacu ulohu 1/8
 
 type Parser symbol result  =  [symbol] -> [([symbol],result)]
 
@@ -240,11 +242,6 @@ twopass lex synt xs = [ (rest,tree)
                       ] 
                       
 --------------------------------------------   
-data LExp = LAMBDA String LExp | 
-            ID String | 
-            APL LExp LExp |
-            CON String | CN Int
-            deriving(Show, Read, Eq)
 
 -- lambda  :: Parser Char LExp
 
