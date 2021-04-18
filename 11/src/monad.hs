@@ -50,15 +50,15 @@ instance Functor BinTree where
     fmap f (Branch left right) = Branch (fmap f left) (fmap f right)
 
 
-data LExp a = Var a | Appl (LExp a) (LExp a) | Abs a (LExp a) deriving (Show)
+data LExp a = ID a | APP (LExp a) (LExp a) | ABS a (LExp a) deriving (Show)
 instance Functor LExp where
-       fmap f (Var x)                             = Var (f x)
-       fmap f (Appl left right)        = Appl (fmap f left) (fmap f right)
-       fmap f (Abs x right)               = Abs (f x) (fmap f right)       
+       fmap f (ID x)                             = ID (f x)
+       fmap f (APP left right)        = APP (fmap f left) (fmap f right)
+       fmap f (ABS x right)               = ABS (f x) (fmap f right)       
 
-omega = Abs "x" (Appl (Var "x") (Var "x"))
+omega = ABS "x" (APP (ID "x") (ID "x"))
 
-data RoseTree a = Rose a [RoseTree a]
+data RoseTree a = Rose a [RoseTree a]  deriving (Show)
 instance Functor RoseTree where
        fmap f (Rose a bs)       = Rose (f a) (map (fmap f) bs)
 
@@ -309,7 +309,7 @@ evalOutM(Div t u) = do valT<-evalOutM t;
 
 --------------------------------------------------
 
-data TTerm       = TVar String | TTerm :->: TTerm | CN String
+data TTerm       = TID String | TTerm :->: TTerm | CN String
                      deriving(Show, Read, Eq)
 
 test        :: Bool -> a -> Maybe a
@@ -322,29 +322,29 @@ occur        :: String -> TTerm -> Bool
 occur _ _ = False       -- toto treba dorobit
 
 value :: String->Subst ->TTerm
-value x []                             = TVar x
+value x []                             = TID x
 value x ((y,t):s)       | x==y       = t
                                    | otherwise = value x s
 
 unify       :: TTerm -> TTerm -> Subst -> Maybe Subst
-unify       (TVar x) y s       | (TVar x)/=t         = unify t y s where t = value x s
-unify       x (TVar y) s       | (TVar y)/=t       = unify x t s where t = value y s
+unify       (TID x) y s       | (TID x)/=t         = unify t y s where t = value x s
+unify       x (TID y) s       | (TID y)/=t       = unify x t s where t = value y s
 unify        (CN x) (CN y) s        = test (x == y) s
-unify       (TVar x) (TVar y) s       | x == y       = return s
-                                                 | x < y              = return ((x,TVar y):s)
-                                                 | y < x              = return ((y,TVar x):s)
-unify       (TVar x) t s       = test (not (occur x t)) ((x,t):s)
-unify       t (TVar x) s       = test (not (occur x t)) ((x,t):s)
+unify       (TID x) (TID y) s       | x == y       = return s
+                                                 | x < y              = return ((x,TID y):s)
+                                                 | y < x              = return ((y,TID x):s)
+unify       (TID x) t s       = test (not (occur x t)) ((x,t):s)
+unify       t (TID x) s       = test (not (occur x t)) ((x,t):s)
 
 unify       (t1 :->: t2) (u1 :->: u2) s       = do { s1 <- unify t1 u1 s; s2 <- unify t2 u2 s1; return s2 }
                                    
-t1 = (TVar "x") :->: ((TVar "u") :->: (TVar "x")) :->: (TVar "w")
-t2 = (TVar "y") :->: ((TVar "x") :->: (CN "Int")):->: (CN "Real")
+t1 = (TID "x") :->: ((TID "u") :->: (TID "x")) :->: (TID "w")
+t2 = (TID "y") :->: ((TID "x") :->: (CN "Int")):->: (CN "Real")
 
 -------------------------------------------
 
 
--- data IO a = ... {- abstract -}
+-- data IO a = ... {- ABStract -}
 
 -- getChar ::         IO Char
 -- putChar :: Char -> IO ()
@@ -397,3 +397,70 @@ guardedComprehension [1..10] [1..10]
 [(1,8),(2,4),(4,2),(8,1)]
 -}
 
+
+double :: Functor f => f Int -> f Int
+double = fmap (*2)
+sqr :: Functor f => f Int -> f Int
+sqr = fmap (^2)
+
+-----
+sequenceApplicative :: Applicative f => [f a] -> f [a]
+sequenceApplicative []     =  pure []
+sequenceApplicative (x:xs) = pure (:) <*> x <*> sequenceApplicative xs
+
+sequenceApplicative' :: Applicative f => [f a] -> f [a]
+sequenceApplicative' xs = foldr (\x -> \rec -> pure (:) <*> x <*> rec) (pure []) xs
+
+instance Applicative RoseTree where
+    -- pure :: a -> RoseTree a                            
+    pure x = Rose x []
+    -- (<*>) :: RoseTree (a -> b) -> RoseTree a -> RoseTree b
+    (Rose gs gsons) <*> (Rose xs xsons) = Rose (gs xs) [g<*>x | (g, x) <- zip gsons xsons]
+    
+-- data RoseTree a = Rose a [RoseTree a]  deriving (Show)
+-----------------------------------------------
+--newtype List a = List [a] deriving (Show)
+data List a = List [a] deriving (Show)
+
+instance Functor List where
+    -- fmap :: (a -> b) -> List a -> List b
+    fmap g (List xs) = List (fmap g xs)
+
+instance Applicative List where
+    -- pure :: a -> List a
+    pure x = List (repeat x)
+    -- (<*>) :: List (a -> b) -> List a -> List b
+    (List gs) <*> (List xs) = List [g x | (g, x) <- zip gs xs]
+    
+    
+--------------
+data Expr t =   Var t | Val Int | 
+                Add (Expr t) (Expr t) |
+                Mult (Expr t) (Expr t)  deriving (Show)
+                
+instance Functor Expr where
+    -- fmap :: (a -> b) -> Expr a -> Expr b
+    fmap g (Var x) = Var (g x)
+    fmap g (Val i) = Val i
+    fmap g (Add e1 e2) = Add (fmap g e1) (fmap g e2)
+    fmap g (Mult e1 e2) = Mult (fmap g e1) (fmap g e2)
+    
+instance Applicative Expr where
+    -- pure :: a -> Expr a  
+    pure x = Var x
+    -- (<*>) :: Expr (a -> b) -> Expr a -> Expr b
+    _ <*> Val x = Val x
+    Val x <*> _ = Val x
+    Var f <*> Var x = Var (f x)
+    Var f <*> (Add x y) = Add (fmap f x) (fmap f y)
+    (Add f g) <*> x = Add (f <*> x) (g <*> x)    
+    Var f <*> (Mult x y) = Mult (fmap f x) (fmap f y)
+    (Mult f g) <*> x = Mult (f <*> x) (g <*> x)    
+    
+instance Monad Expr where
+    -- return :: a -> Expr a  
+    return = pure
+    -- (>>=) :: Expr a -> (a -> Expr b) -> Expr b
+    Val x >>= _ = Val x
+    Var x >>= f = f x
+    Add a b >>= f = Add (a >>= f) (b >>= f)    
