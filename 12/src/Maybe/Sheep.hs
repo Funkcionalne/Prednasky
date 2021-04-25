@@ -49,13 +49,39 @@ parents x = sequence [father x, mother x]
 -- parents dolly = Nothing
 
 parents' :: Sheep -> [Sheep]
-parents' x = (if father x == Nothing then [] else [fromJust (father x)])
-             ++
-             (if mother x == Nothing then [] else [fromJust (mother x)])
+parents' x = maybeToList (father x)
+             `mplus`
+             maybeToList (mother x)
+
+--parents' x = (if father x == Nothing then [] else [fromJust (father x)])
+--             ++
+--             (if mother x == Nothing then [] else [fromJust (mother x)])
+
 -- parents' dolly = ["Molly"]
 
+parents''1 :: Sheep -> Maybe [Sheep]
+parents''1 x = do { o<-father x; return [o] } `mplus` (do m<-mother x; return [m])
+
+parents''2 :: Sheep -> Maybe [Sheep]
+parents''2 x = do {return $ maybeToList(father x)} `mplus` do {return $ maybeToList(mother x)}
+
+parents''3 :: Sheep -> Maybe [Sheep]
+parents''3 x = (return $ maybeToList(father x)) `mplus` (return $ maybeToList(mother x))
+
+parents''4 :: Sheep -> Maybe [Sheep]
+parents''4 x = (Just $ maybeToList(father x)) `mplus` (Just $ maybeToList(mother x))
+
 parents'' :: Sheep -> Maybe [Sheep]
-parents'' x = do { o<-father x; return [o] } `mplus` (do m<-mother x; return [m])
+parents'' x = return $ maybeToList(father x) `mplus` maybeToList(mother x)
+
+parents''5 :: Sheep -> Maybe [Sheep]
+parents''5 x = return $ maybeToMonad(father x) `mplus` maybeToMonad(mother x)
+
+-- convert a Maybe value into another monad
+maybeToMonad :: (MonadPlus m) => Maybe a -> m a
+maybeToMonad Nothing  = mzero
+maybeToMonad (Just s) = return s
+
 -- parents'' dolly = Just ["Molly"]
 
 parents''' :: Sheep -> Maybe [Sheep]

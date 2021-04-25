@@ -263,11 +263,10 @@ goSM t        = let SM p = evalSM t in
 
 evalSM'          :: Term -> SM Int
 evalSM'(Con a)   = return a
-evalSM'(Div t u) = do valT<-evalSM' t;
+evalSM'(Div t u) = do valT<-evalSM' t
                       valU<-evalSM' u;
-                      incState;
-                      return(valT `div` valU) 
-
+                      incState
+                      return(valT `div` valU)
                                             
 goSM'              :: Term -> State
 goSM' t        = let SM p = evalSM' t in 
@@ -397,3 +396,11 @@ guardedComprehension [1..10] [1..10]
 [(1,8),(2,4),(4,2),(8,1)]
 -}
 
+
+sequenceUsingFold :: Monad m => [m a] -> m [a]
+sequenceUsingFold = foldr (\c cs -> do { x <- c; xs <- cs; return (x:xs) }) (return [])
+
+sequence2       :: Monad m => [m a] -> m [a] 
+sequence2 ms = foldr k (return []) ms
+            where
+              k m m' = do { x <- m; xs <- m'; return (x:xs) }                       
