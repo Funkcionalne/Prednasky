@@ -108,21 +108,3 @@ dolly  = Sheep "Dolly"   (Just molly) Nothing
 --parents''' dolly
 main = parents_ dolly
 
-
-
-
-
-
--------------------------------
-k_mother :: Int -> Sheep -> Maybe Sheep
-k_mother 0 x = Just x
-k_mother 1 x = mother x
-k_mother k x = do m <- mother x
-                  mk <- k_mother (k-1) m
-                  return mk
-
-k_predecesors :: Int -> Sheep -> [Sheep]
-k_predecesors 1 x = parents' x
-k_predecesors k x = do pred <- k_predecesors (k-1) x
-                       mk <- parents' pred
-                       return mk
