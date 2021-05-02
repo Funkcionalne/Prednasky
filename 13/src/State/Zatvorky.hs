@@ -1,19 +1,24 @@
-module StateGame where
-
+module Zatvorky where
 import Control.Monad.State
 
 type Value = Int
-type Stav = (Bool, Int)
+type Stav = (Bool, Int, Int)
 
-loop :: String -> State Stav Value
-loop []     = do (ok, depth) <- get
-                 if ok then return depth else return (-1)
-
+loop :: String -> State Stav Bool
+loop []     = do (ok, parents, brackets) <- get
+                 return $ ok && parents == 0 && brackets == 0
 loop (x:xs) = do
-    (ok, depth) <- get
+    (ok,parents, brackets) <- get
     case x of
-         '(' | ok -> put (ok, depth + 1)
-         ')' | ok -> if depth > 0 then put (ok, depth - 1) else put (False, 999)
+         '('      -> put (ok,parents+1, brackets)
+         '['      -> put (ok,parents, brackets+1)
+         ')' | parents > 0    -> put (ok,parents-1, brackets) 
+         ')' | parents <= 0 -> put (False,0,0)
+         ']'      -> put $ if (brackets>0) then (ok,parents, brackets-1) else (False,0,0)
     loop xs
 
-main = print $ 0 == evalState (loop "(()") (True, 0)
+main :: IO ()
+main = mapM_ print [ input ++ " -> "++ show (evalState (loop input) (True, 0, 0)) | input <- [
+                                    "()", "(())", "(()())", "(()()(()))",
+                                    ")(", "([)]", "[[]]", "][", "()[]"]
+        ]
