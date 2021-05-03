@@ -27,8 +27,8 @@ data Papalasi a = Papalasi {
 
 instance Functor Papalasi where
   fmap f paps = Papalasi {
-    --premier = f (premier paps),
-    premier = f (fromJust (Data.Map.lookup "financ" (vlada paps))),
+    premier = f (premier paps),
+    --premier = f (fromJust (Data.Map.lookup "financ" (vlada paps))),
     vlada = f <$> vlada paps,
     --parlament = f <$> parlament paps
     parlament = fmap f (parlament paps)

@@ -15,3 +15,5 @@ evalSM (Div t u) = do valT<-evalSM t
 t :: Term
 t = (Div (Div (Con 1972) (Con 2)) (Con 23))
 
+
+

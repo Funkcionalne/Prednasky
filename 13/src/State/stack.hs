@@ -45,10 +45,80 @@ pushAll n   = do
 pushAll' :: Int -> State Stack String
 pushAll' 0   = return ""
 pushAll' n   = do
-                stack <- get  -- push n
-                put (n:stack)
-                str <- pushAll (n-1)
-                (nn:stack') <- get  -- nn <- pop
-                put stack'
-                return (show nn ++ str)
+                    stack <- get  -- push n
+                    put (n:stack)
+                    str <- pushAll' (n-1)
+                    xx <- get  
+                    let (nn:stack') = xx
+                    put stack'
+                    return (show nn ++ str)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fooo :: Int -> State Stack String
+fooo 0   = return ""
+fooo n   = do  modify (n:)
+                    str <- fooo (n-1)
+                    xx <- get  
+                    modify tail
+                    return (show (head xx) ++ str)
                 
