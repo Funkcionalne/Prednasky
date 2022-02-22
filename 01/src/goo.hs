@@ -9,6 +9,17 @@ goo 0 b = 0
 goo a b | a `mod` 2 == 0 =     goo (a `div` 2) (2*b) 
         | otherwise      = b + goo (a `div` 2) (2*b)
 
+gooo :: Int -> Int -> Int
+gooo 0 b = 0 
+gooo a b | a `mod` 2 == 0 =     aux
+         | otherwise      = b + aux
+          where aux = goo (a `div` 2) (2*b)
+
+gooo' :: Int -> Int -> Int
+gooo' 0 b = 0 
+gooo' a b  = let aux = goo (a `div` 2) (2*b) in
+             aux + if a `mod` 2 == 0 then 0 else b
+
 -- ľavičiarsky akumulátorčík
 goo' :: Int -> Int -> Int
 goo' a b = foldl (\acc -> \(a,b) -> acc + if a `mod` 2 > 0 then b else 0) 0 $
@@ -44,4 +55,6 @@ hypotheza2   = quickCheck(\a -> \b ->
 hypotheza3   = quickCheck(\a -> \b -> 
                     a >= 0 ==> length ( nub [goo a b, goo' a b, goo'' a b, goo''' a b]) == 1)
 
+hypotheza4   = quickCheck(\a -> \b -> 
+                    a >= 0 ==> goo a b == gooo' a b)
                      

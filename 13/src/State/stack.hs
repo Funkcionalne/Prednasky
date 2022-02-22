@@ -48,8 +48,8 @@ pushAll' n   = do
                     stack <- get  -- push n
                     put (n:stack)
                     str <- pushAll' (n-1)
-                    xx <- get  
-                    let (nn:stack') = xx
+                    stack1 <- get  
+                    let (nn:stack') = stack1
                     put stack'
                     return (show nn ++ str)
 
@@ -112,7 +112,7 @@ pushAll' n   = do
 
 
 
-
+{-
 
 fooo :: Int -> State Stack String
 fooo 0   = return ""
@@ -121,4 +121,4 @@ fooo n   = do  modify (n:)
                     xx <- get  
                     modify tail
                     return (show (head xx) ++ str)
-                
+                -}
