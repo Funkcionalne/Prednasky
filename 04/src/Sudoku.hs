@@ -114,7 +114,6 @@ blank                 =  replicate n (replicate n '.')
                          where n = boxsize ^ 2
                 
                 
-                
 rows                  :: Matrix a -> [Row a]
 rows                  =  id
                 
@@ -150,7 +149,6 @@ boxs                  =  unpack . map cols . pack
                             group n []    =  []
                             group n xs    =  take n xs : group n (drop n xs)
                 
-                
 valid                 :: Grid -> Bool
 valid g               =  all nodups (rows g) &&
                          all nodups (cols g) &&
@@ -174,11 +172,11 @@ cp []                 =  [[]]
 cp (xs:xss)           =  [y:ys | y <- xs, ys <- cp xss]
                 
                 
-expand              :: Matrix [a] -> [Matrix a]
-expand              =  cp . map cp
+collapse              :: Matrix [a] -> [Matrix a]
+collapse              =  cp . map cp
                 
 solver                 :: Grid -> [Grid]
-solver                 =  filter valid . expand . choices
+solver                 =  filter valid . collapse . choices
                 
                 
 prune                 :: Matrix Choices -> Matrix Choices
@@ -193,11 +191,11 @@ minus                 :: Choices -> Choices -> Choices
 xs `minus` ys         =  if single xs then xs else xs \\ ys
                 
 solver2                :: Grid -> [Grid]
-solver2                =  filter valid . expand . prune . choices
+solver2                =  filter valid . collapse . prune . choices
                 
                 
 solver3                :: Grid -> [Grid]
-solver3                =  filter valid . expand . fix prune . choices
+solver3                =  filter valid . collapse . fix prune . choices
                 
 fix                   :: Eq a => (a -> a) -> a -> a
 fix f x               =  if x == x' then x else fix f x'
@@ -228,7 +226,7 @@ solver4                =  search . prune . choices
 search                :: Matrix Choices -> [Grid]
 search m        
  | blocked m          =  []
- | complete m         =  expand m
+ | complete m         =  collapse m
  | otherwise          =  [g | m' <- expand_ m
                             , g  <- search (prune m')]
                 
@@ -257,153 +255,153 @@ e = [[9*i+j+1 | j <- [0..8]] | i <- [0..8]]
 -- (0.03 secs, 0 bytes) - lahke
 m2 = [".52769..8",
       "76.8.3.9.",
-	  ".83.4....",
-	  "..4......",
-	  ".2961487.",
-	  "......5..",
-	  "....7.231",
-	  ".4.5.2.87",
-	  "2..19864."]
+      ".83.4    ",
+      "..4    ..",
+      ".2961487.",
+      "    ..5..",
+      "    7.231",
+      ".4.5.2.87",
+      "2..19864."]
                 
 -- (0.05 secs, 0 bytes)
 m3 = ["86..9...5", --108
-      ".5.8.....",
+      ".5.8    .",
       "73.1..8..",
       "..54...7.",
-      ".........",
+      "        .",
       ".8...36..",
       "..2..5.19",
-      ".....9.2.",
+      "    .9.2.",
       "3...1..56"]
                 
 -- (0.08 secs, 14,933,544 bytes)      
 m4 = ["263.1.5..", --101
       "...54.2..",
-      ".....2...",
-      "....91..2",
+      "    .2...",
+      "    91..2",
       ".46...81.",
-      "7..48....",
-      "...9.....",
+      "7..48    ",
+      "...9    .",
       "..1.34...",
-      "..8.2.469"]	  
+      "..8.2.469"]      
                 
 -- (0.02 secs, 0 bytes)
-m5 = ["17.......",
+m5 = ["17    ...",
       ".85.293..",
       "3..8..257",
       "634..8592",
-      ".........",
+      "        .",
       "7594..138",
       "921..5..3",
       "..394.82.",
-      ".......65"]
-	              
+      "    ...65"]
+                  
 -- (0.27 secs, 103,953,528 bytes)     
-m6 = ["6....4...",   --tazke fup nevyriesi
+m6 = ["6    4...",   --tazke fup nevyriesi
       "..8..7...",
       "71..8.9..",
       ".3...57.1",
-      ".8.....2.",
+      ".8    .2.",
       "5.79...6.",
       "..1.6..72",
       "...4..5..",
-      "...5....9"]
+      "...5    9"]
                 
--- (0.09 secs, 15,129,496 bytes)	  
+-- (0.09 secs, 15,129,496 bytes)      
 m7 = ["...7.6.8.",
       "..6.59.13",
-      ".......9.",
-      "95....12.",
-      "....7....",
-      ".61....39",
-      ".3.......",
+      "    ...9.",
+      "95    12.",
+      "    7    ",
+      ".61    39",
+      ".3    ...",
       "24.59.3..",
-  	  ".8.1.2..."]	  
+        ".8.1.2..."]      
                 
 -- size 4x4      
-h1 = ["....h.4....a.8.1",
-      "31.485.b67.....d",
+h1 = ["    h.4    a.8.1",
+      "31.485.b67    .d",
       "..e..d...2..6..a",
-      ".dca..19........",
-      "..5..b..h.....8.",
-      ".8.c....9.7.2...",
-      "a7..c3h.........",
-      "f.h62.81c.....75",
-      "5.4.......1eh9a.",
+      ".dca..19        ",
+      "..5..b..h    .8.",
+      ".8.c    9.7.2...",
+      "a7..c3h        .",
+      "f.h62.81c    .75",
+      "5.4    ...1eh9a.",
       "..6.1a.h.9..c.d.",
       "b.f.9e...c.38...",
       ".a..d..2...6.3.f",
-      ".....4.e.82h3b..",
+      "    .4.e.82h3b..",
       "6..2..f.3.5.d...",
       "..df.h.5...71.6.",
       "9.1b.8...4.d..h."]               
                 
-h2 = ["....1.5....b.9.2",
-      "42.596.c78.....e",
+h2 = ["    1.5    b.9.2",
+      "42.596.c78    .e",
       "..f..e...3..7..b",
-      ".edb..2a........",
-      "6.5.......2f1ab.",
+      ".edb..2a        ",
+      "6.5    ...2f1ab.",
       "..7.2b.1.a..d.e.",
       "c.h.af...d.49...",
       ".b..e..3...7.4.h",
-      "..6..c..1.....9.",
-      ".9.d....a.8.3...",
-      "b8..d41.........",
-      "h.173.92d.....86",
-      ".....5.f.9314c..",
+      "..6..c..1    .9.",
+      ".9.d    a.8.3...",
+      "b8..d41        .",
+      "h.173.92d    .86",
+      "    .5.f.9314c..",
       "7..3..h.4.6.e...",
       "..eh.1.6...82.7.",
-	    "a.2c.9...5.e..1."]    
-	              
+        "a.2c.9...5.e..1."]    
+                  
 xh1 =["..UYR.Q.E..T.V..B.N.SIC..",
       "..LXO...BC.IWQ.VG...KTJ..",
-	  "GEB.Q..JMAH...PITD..O.NWV",
-	  "CA.....XT.NF.MO.KH.....YL",
-	  "IJT..UK.P.GS.LB.O.YE..HFQ",
-	  "....VS...X.L.P.J...GH....",
-	  "D...P.IBU.KO.NA.SCF.Q...J",
-	  "..FO..H..LUWYECR..D..VS..",
-	  "EYQUJ.P.CN.....XW.O.LGBAF",
-	  ".CM..F.TG..B.J..AQ.V..PU.",
-	  "..SDK.JO.........VM.RQX..",
-	  "TF.MXRSN.E.....B.GIJYP.VU",
-	  ".H.....L.........N.....O.",
-	  "RL.BIXUY.V.....D.OKPEC.HG",
-	  "..VEU.CG.........ST.MLI..",
-	  ".DN..J.WL..C.A..UE.O..YM.",
-	  "LSRFA.E.NO.....CM.Q.UKVPH",
-	  "..OG..D..BVYHKLF..R..AQ..",
-	  "V...T.GUF.WM.OE.XPA.I...R",
-	  "....BA...Q.N.S.T...LJ....",
-	  "JVC..EB.O.QR.FT.D.XU..MSY",
-	  "QB.....PA.JX.IH.YK.....LD",
-	  "STH.L..QRYO...UMEA..C.FKB",
-	  "..DNF...VK.EAY.OJ...PHG..",
-	  "..IAY.L.S..K.B..Q.V.WRU.."]
+      "GEB.Q..JMAH...PITD..O.NWV",
+      "CA    .XT.NF.MO.KH    .YL",
+      "IJT..UK.P.GS.LB.O.YE..HFQ",
+      "    VS...X.L.P.J...GH    ",
+      "D...P.IBU.KO.NA.SCF.Q...J",
+      "..FO..H..LUWYECR..D..VS..",
+      "EYQUJ.P.CN    .XW.O.LGBAF",
+      ".CM..F.TG..B.J..AQ.V..PU.",
+      "..SDK.JO        .VM.RQX..",
+      "TF.MXRSN.E    .B.GIJYP.VU",
+      ".H    .L        .N    .O.",
+      "RL.BIXUY.V    .D.OKPEC.HG",
+      "..VEU.CG        .ST.MLI..",
+      ".DN..J.WL..C.A..UE.O..YM.",
+      "LSRFA.E.NO    .CM.Q.UKVPH",
+      "..OG..D..BVYHKLF..R..AQ..",
+      "V...T.GUF.WM.OE.XPA.I...R",
+      "    BA...Q.N.S.T...LJ    ",
+      "JVC..EB.O.QR.FT.D.XU..MSY",
+      "QB    .PA.JX.IH.YK    .LD",
+      "STH.L..QRYO...UMEA..C.FKB",
+      "..DNF...VK.EAY.OJ...PHG..",
+      "..IAY.L.S..K.B..Q.V.WRU.."]
                 
 xh2 =           
    ["..U.R.Q.E..T.V..B.N.SIC..",
     "..LXO...BC.IWQ.VG...KTJ..",
-	  "GEB.Q..JM.H...P.TD..O.NWV",
-	  "CA.....XT.NF.MO.KH.....YL",
-	  "IJT..UK.P.GS.LB.O.YE..HFQ",
-	  "....VS...X.L.P.J...GH....",
-	  "D...P.IBU.KO.NA.SCF.Q...J",
-	  "..FO..H..LU.Y.CR..D..VS..",
-	  "EY.UJ.P.CN.....XW.O.LG.AF",
-	  ".CM..F.TG..B.J..AQ.V..PU.",
-	  "..SDK.JO.........VM.RQX..",
-	  "TF.MX.SN.E.....B.GI.YP.VU",
-	  ".H.....L.........N.....O.",
-	  "RL.B.X.Y.V.....D.OK.EC.HG",
-	  "..VEU.CG.........ST.MLI..",
-	  ".DN..J.WL..C.A..UE.O..YM.",
-	  "LS.FA.E.NO.....CM.Q.UK.PH",
-	  "..OG..D..BV.H.LF..R..AQ..",
-	  "V...T.GUF.WM.OE.XPA.I...R",
-	  "....BA...Q.N.S.T...LJ....",
-	  "JVC..EB.O.QR.FT.D.XU..MSY",
-	  "QB.....PA.JX.IH.YK.....LD",
-	  "STH.L..QR.O...U.EA..C.FKB",
-	  "..DNF...VK.EAY.OJ...PHG..",
-	  "..IAY.L.S..K.B..Q.V.WRU.."]
+      "GEB.Q..JM.H...P.TD..O.NWV",
+      "CA    .XT.NF.MO.KH    .YL",
+      "IJT..UK.P.GS.LB.O.YE..HFQ",
+      "    VS...X.L.P.J...GH    ",
+      "D...P.IBU.KO.NA.SCF.Q...J",
+      "..FO..H..LU.Y.CR..D..VS..",
+      "EY.UJ.P.CN    .XW.O.LG.AF",
+      ".CM..F.TG..B.J..AQ.V..PU.",
+      "..SDK.JO        .VM.RQX..",
+      "TF.MX.SN.E    .B.GI.YP.VU",
+      ".H    .L        .N    .O.",
+      "RL.B.X.Y.V    .D.OK.EC.HG",
+      "..VEU.CG        .ST.MLI..",
+      ".DN..J.WL..C.A..UE.O..YM.",
+      "LS.FA.E.NO    .CM.Q.UK.PH",
+      "..OG..D..BV.H.LF..R..AQ..",
+      "V...T.GUF.WM.OE.XPA.I...R",
+      "    BA...Q.N.S.T...LJ    ",
+      "JVC..EB.O.QR.FT.D.XU..MSY",
+      "QB    .PA.JX.IH.YK    .LD",
+      "STH.L..QR.O...U.EA..C.FKB",
+      "..DNF...VK.EAY.OJ...PHG..",
+      "..IAY.L.S..K.B..Q.V.WRU.."]
