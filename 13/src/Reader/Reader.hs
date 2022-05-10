@@ -33,12 +33,12 @@ func3 params = (fromIntegral $ length $ p1 params ++ p2 params ++ p3 params) * 3
 
 -------
 func1' :: Reader Params String
-func1' = do params <- ask
+func1' = do --params <- ask
             result <- func2'
             return $ "Result: " ++ (show result)
 
 func2' :: Reader Params Int
-func2' = do params <- ask
+func2' = do --params <- ask
             result <- func3'
             return $ 2+floor(result)
            

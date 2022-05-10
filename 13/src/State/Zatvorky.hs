@@ -1,7 +1,6 @@
 module Zatvorky where
 import Control.Monad.State
 
-type Value = Int
 type Stav = (Bool, Int, Int)
 
 loop :: String -> State Stav Bool
