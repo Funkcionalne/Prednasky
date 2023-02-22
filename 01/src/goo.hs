@@ -49,7 +49,7 @@ goo''' a b = sum $
                      iterate (\(a,b) -> (shiftR a 1, shiftL b 1)) (a,b)            
                      
 hypotheza1   = quickCheck(\a -> \b -> 
-                    goo a b == goo' a b)
+                    a >= 0 ==> goo a b == goo' a b)
 hypotheza2   = quickCheck(\a -> \b -> 
                     a >= 0 ==> goo a b == goo' a b)
 hypotheza3   = quickCheck(\a -> \b -> 
