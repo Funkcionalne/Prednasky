@@ -45,6 +45,10 @@ cifry' = map(`mod` 10) . reverse . takeWhile (> 0) . iterate (`div`10)
       
 cifryR' :: Integer -> [Integer] 
 cifryR' = map(`mod` 10) . takeWhile (> 0) . iterate (`div`10)
+
+cifry'' n = map (read) (map (:"") $ show n)::[Int]
+cifry''' n = map (read . (:"")) $ show n::[Int]
+
       
 ---------------------------
 
@@ -75,9 +79,9 @@ maxSucet''' = maximum . map (maximum) . init . foldl (\t -> \p -> (p:(map (+p) (
 kadane :: [Int] -> Int -> Int -> Int -- list -> tempMax -> globalMax -> max
 kadane []     _       globalMax = globalMax
 kadane (x:xs) tempMax globalMax = kadane xs newTempMax newGlobalMax
-	where
-		newTempMax = max (tempMax + x) 0
-		newGlobalMax = max globalMax newTempMax
+      where
+         newTempMax = max (tempMax + x) 0
+         newGlobalMax = max globalMax newTempMax
 
 ------------------------
 
