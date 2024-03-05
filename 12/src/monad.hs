@@ -251,6 +251,8 @@ instance Monad SM where
 
 incState       :: SM ()
 incState       = SM (\x -> ((),x+1))
+--incState       :: SM Bool
+--incState       = SM (\x -> (True,x+1))
 
 evalSM          :: Term -> SM Int
 evalSM(Con a)   = return a

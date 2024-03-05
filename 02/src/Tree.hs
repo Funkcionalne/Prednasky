@@ -12,7 +12,7 @@ import Data.List (nub,delete)
 import Data.Data
 import Data.Char
 import Control.Monad
-import Control.Monad.State
+--import Control.Monad.State
 import Data.Maybe (maybeToList)
 
 data BVS t = Nil | Node (BVS t) t (BVS t)  
