@@ -49,7 +49,7 @@ pythagoras =   [(x, y, z) | z <- [1..],
                             y <- [x..z],
                             x * x + y * y == z * z]
 
-{- zle riesenie
+{-- zle riesenie
 pythagoras' =   do z <- [1..]
                    x <- [1..z]
                    y <- [x..z]

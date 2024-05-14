@@ -35,3 +35,5 @@ ink k start = do m <- moveKnight start
 
 -- length $ ink 7 (1,1) = 45016
 -- length $ nub $ ink 7 (1,1) = 32
+
+-- length $ nub $ concat [nub $ ink k (1,1) | k <- [1..6]]

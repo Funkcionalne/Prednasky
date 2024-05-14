@@ -9,6 +9,17 @@ main = do params <- loadParams
           let result = func1 params
           putStrLn result
           
+{-
+do 
+    p<-loadParams
+    let r = func1 p
+    putStrLn r 
+    
+do 
+    p<-loadParams
+    func1 p
+-}
+          
 data Params = Params { p1 :: String, p2 :: String, p3 :: String }     deriving (Show)
 
 loadParams :: IO Params
@@ -33,14 +44,14 @@ func3 params = (fromIntegral $ length $ p1 params ++ p2 params ++ p3 params) * 3
 
 -------
 func1' :: Reader Params String
-func1' = do --params <- ask
+func1' = do params <- ask
             result <- func2'
-            return $ "Result: " ++ (show result)
+            return $ "Result: " ++ (show result)  ++ show (p2 params)
 
 func2' :: Reader Params Int
-func2' = do --params <- ask
+func2' = do params <- ask
             result <- func3'
-            return $ 2+floor(result)
+            return $ 2+floor(result) -- + (length $ p1 params)
            
 func3' :: Reader Params Float
 func3'  = do params <- ask

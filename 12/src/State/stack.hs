@@ -48,7 +48,7 @@ pushAll' n   = do
                 stack <- get  -- push n
                 put (n:stack)
                 str <- pushAll (n-1)
-                (nn:stack') <- get  -- nn <- pop
-                put stack'
-                return (show nn ++ str)
+                yy <- get -- (nn:stack') <- get  -- nn <- pop
+                put (tail yy)
+                return (show (head yy) ++ str)
                 

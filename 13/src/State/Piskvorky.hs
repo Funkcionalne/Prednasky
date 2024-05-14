@@ -31,8 +31,8 @@ move :: State PiskyState (Int,Int)
 move = do pstate <- get
           let free = [ (i,j) | i<-[0..size-1], j<-[0..size-1], (playground pstate)!!i!!j == Empty]
           let gen = generator pstate
-          let (r, gen') = randomR (0, 120) gen
-          --put $ pstate { generator = gen' }
+          let (r, gen') = randomR (0, length free -1) gen
+          put $ pstate { generator = gen' }
           return $ free !! r
   
 update :: (Int,Int) -> State PiskyState ()
@@ -58,3 +58,22 @@ main = do g <- getStdGen
           let istate = pinit g
           putStr (show $ execState (sequence $ take 10 $ repeat oneTurn) istate)
 
+main':: IO()
+main' = do  g <- getStdGen
+            let istate = pinit g
+            putStr (show $ execState ( sequence [oneTurn,oneTurn]) istate)
+
+
+main''   :: Int -> IO()
+main'' n = do g <- getStdGen
+              let istate = pinit g
+              putStr (show $ execState (sequence $ take n $ repeat oneTurn) istate)
+
+
+{-
+do  g <- getStdGen
+    let istate = pinit g
+    putStr (show $ execState oneTurn istate)
+
+
+-}
