@@ -16,16 +16,16 @@ line        :: Term -> Int -> String
 line t a    = "eval (" ++ show t ++ ") <=" ++ show a ++ "\n"
 
 eval          :: Term -> Writer String Int
-eval x@(Con a)   = --do tell (line x a)
-                   --   return a
-                   writer (a, line x a)
+eval x@(Con a)   = do tell (line x a)
+                      return a
+                   --writer (a, line x a)
 eval x@(Div t u) = do  
                         valT <- eval t 
                         valU <- eval u
---                        tell (line x (valT `div` valU))
---                        return (valT `div` valU)
-                        let result = (valT `div` valU)
-                        writer (result, (line x result))
+                        tell (line x (valT `div` valU))
+                        return (valT `div` valU)
+--                        let result = (valT `div` valU)
+--                        writer (result, (line x result))
  
 t :: Term
 t = (Div (Div (Con 1972) (Con 2)) (Con 23))

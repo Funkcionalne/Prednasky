@@ -51,7 +51,7 @@ func1' = do params <- ask
 func2' :: Reader Params Int
 func2' = do params <- ask
             result <- func3'
-            return $ 2+floor(result) -- + (length $ p1 params)
+            return $ 2+floor(result) + (length $ p1 params)
            
 func3' :: Reader Params Float
 func3'  = do params <- ask
@@ -62,6 +62,6 @@ main' :: IO ()
 main' = do params <- loadParams
            let result = runReader func1' params
            putStrLn result             
-           let result1 = runReader (local (\p -> Params { p1 = "aa", p2 = "bb", p3 ="cc" }) func1') params
-           putStrLn result1
+           --let result1 = runReader (local (\p -> Params { p1 = "aa", p2 = "bb", p3 ="cc" }) func1') params
+           --putStrLn result1
 
