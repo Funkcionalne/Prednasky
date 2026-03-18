@@ -21,3 +21,19 @@ hypoteza2'' = quickCheck(\n -> (n > 10) ==> pocetCifier n == pocetCifier' n)
 
 -- plati/neplati ?
 
+numDigits :: Integer -> Int
+numDigits n  | n < 0     = numDigits (-n)  
+         | n < 10    = 1  
+         | otherwise = 1 + numDigits (n `div` 10)
+
+numDigits' :: Integer -> Int
+numDigits' n  | n == 0    = 1  
+              | otherwise = floor (logBase 10 (fromIntegral (abs n))) + 1
+
+
+numDigits'' :: Integer -> Int
+numDigits'' = length . show . abs
+
+hyp1 = quickCheck(\n -> (n > 0) ==> numDigits n == numDigits' n)
+hyp2 = quickCheck(\n -> (n > 0) ==> numDigits n == numDigits'' n)
+hyp3 = quickCheck(\n -> (n > 0) ==> numDigits' n == numDigits'' n)

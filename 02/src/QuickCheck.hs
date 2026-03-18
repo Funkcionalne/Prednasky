@@ -63,6 +63,9 @@ ch7   =
             (filter p1 xs) ++ (filter p2 xs) == filter (\x -> p1 x || p2 x) xs)
                   :: [Int] -> (Int->Bool) -> (Int->Bool) -> Bool)
 
+-- filter (\x -> 10 `div` x < 10) (filter (\x -> x > 1) [0,1,2])
+-- filter (\x -> 10 `div` x < 10 && x > 1) [0,1,2]
+
 
 test1 = quickCheck((\xs -> \ys -> (length (xs ++ ys) == length xs + length ys))::[Int]->[Int]->Bool)
 test2 = quickCheck((\xs -> (length (reverse xs ) == length xs ))::[Int]->Bool)
